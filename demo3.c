@@ -11,14 +11,13 @@ typedef struct {
     char serviceDate[15];    
 } Service;
 
+
 void LoadData(Service services[],int *count);
 void SaveData(Service services[],int count);
 void SearchService(Service services[],int count);
 void AddService(Service services[],int *count);
 void DisplayAll(Service services[],int count);
 void Menu(void);
-
-
 
 int main(){
     Service services[MAX];
@@ -64,16 +63,14 @@ void LoadData(Service services[], int *count) {
                   services[*count].serviceID,
                   services[*count].customerName,
                   services[*count].serviceDetails,
-                  services[*count].serviceDate) == 4) {
+                  services[*count].serviceDate) != EOF) {// == 4
+
         (*count)++;
     }
 
     fclose(file);
     printf("%d records loaded.\n", *count);
 }
-
-
-
 
 //save data to csv
 void SaveData(Service services[], int count){
@@ -124,15 +121,16 @@ void AddService(Service services[],int *count){
 void SearchService(Service services[], int count) {
     char input[100];
     printf("Enter Service ID or Customer Name to search: ");
-    getchar();
-    fgets(input, sizeof(input),stdin);
+    scanf("%[^\n]",input);
+    //getchar();
+    //fgets(input, sizeof(input),stdin);
 
-    input[strcspn(input, "\n")] = 0;
+    //input[strcspn(input, "\n")] = 0;
 
     int found = 0;
     for(int i = 0; i < count; i++) {
         if(strcmp(services[i].serviceID, input) == 0 || 
-           strstr(services[i].customerName, input) != NULL) {
+           strcasecmp(services[i].customerName, input) == 0) {
             printf("Service Found:\n");
             printf("ID: %s\nCustomer: %s\nDetails: %s\nDate: %s\n\n",
                    services[i].serviceID,
