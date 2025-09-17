@@ -1,8 +1,10 @@
 #include<stdio.h>
 #include<string.h>
-#include <stdlib.h>
+#include<stdlib.h>
+#include<ctype.h>
 
-#define MAX 100
+#define MAX 100 //max service
+#define LINE_LEN 256 //max line in csv
 
 typedef struct {
     char serviceID[10];       
@@ -11,12 +13,35 @@ typedef struct {
     char serviceDate[15];    
 } Service;
 
+/* prototypes for helper functions */
+void trim_newline(char *s);
+void trim_whitespace(char *s);
 void LoadData(Service services[],int *count);
 void SaveData(Service services[],int count);
 void SearchService(Service services[],int count);
 void AddService(Service services[],int *count);
 void DisplayAll(Service services[],int count);
 void Menu(void);
+
+void trim_newline(char *s) {
+    if (!s) return;
+    size_t len = strlen(s);
+    while (len > 0 && (s[len-1] == '\n' || s[len-1] == '\r')) {
+        s[--len] = '\0';
+    }
+}
+
+void trim_whitespace(char *s) {
+    if (!s) return;
+    // left trim
+    char *p = s;
+    while (*p && isspace((unsigned char)*p)) p++;
+    if (p != s) memmove(s, p, strlen(p) + 1);
+    // right trim
+    size_t len = strlen(s);
+    while (len > 0 && isspace((unsigned char)s[len-1])) s[--len] = '\0';
+}
+
 
 int main(){
     Service services[MAX];
@@ -28,10 +53,9 @@ int main(){
     do{
         Menu();
         printf("Enter choice: ");
-        if(scanf("%d",&choice)!= 1){
-            printf("Invalid input. Exiting. \n");
-            break;
-        }
+        scanf("%d",&choice);
+            getchar();
+        
 
     switch(choice) {
         case 1: DisplayAll(services, count); break;
@@ -49,26 +73,44 @@ int main(){
 
 
  
-//load data from csv
-void LoadData(Service services[],int *count){
-    FILE *file = fopen("services.csv","r");
-    if(file == NULL){
-        printf("No existing file found.\n");
+void LoadData(Service services[], int *count) {
+    FILE *f = fopen("services.csv", "r");
+    if (!f) {
+        printf("[Info] No existing CSV found, starting fresh.\n");
+        *count = 0;
         return;
     }
+    printf("[Debug] Opened services.csv successfully.\n");
+
+    char line[LINE_LEN];
     *count = 0;
-    while(fscanf(file, "%9[^,],%49[^,],%99[^,],%14s\n",
-                    services[*count].serviceID,
-                    services[*count].customerName,
-                    services[*count].serviceDetails,
-                    services[*count].serviceDate) == 4){ //read only 4 fields
-            (*count)++;                    
-            if (*count >= MAX) break;
+    while (fgets(line, sizeof(line), f)) {
+        trim_newline(line);
+        if (strlen(line) == 0) continue;
+
+        printf("[Debug] Read line: %s\n", line);
+
+        char *t = strtok(line, ",");
+        if (!t) continue;
+        strncpy(services[*count].serviceID, t, sizeof(services[*count].serviceID)-1);
+
+        t = strtok(NULL, ",");
+        if (t) strncpy(services[*count].customerName, t, sizeof(services[*count].customerName)-1);
+
+        t = strtok(NULL, ",");
+        if (t) strncpy(services[*count].serviceDetails, t, sizeof(services[*count].serviceDetails)-1);
+
+        t = strtok(NULL, ",");
+        if (t) strncpy(services[*count].serviceDate, t, sizeof(services[*count].serviceDate)-1);
+
+        (*count)++;
+        if (*count >= MAX) break;
     }
-
-    fclose(file);
-
+    fclose(f);
+    printf("[Info] Loaded %d service(s)\n", *count);
 }
+
+
 
 //save data to csv
 void SaveData(Service services[], int count){
@@ -144,23 +186,22 @@ void SearchService(Service services[], int count) {
 }
 
 //display all records cuz I'm paranoid
-void DisplayAll(Service services[],int count){
-    if(count ==0){
-        printf("No services to display,\n");
+void DisplayAll(Service services[], int count) {
+    if (count == 0) {
+        printf("No services found.\n");
         return;
     }
-    printf("\n---- All Services (%d) ----\n",count);
-    for(int i=0; i< count;i++){
-        printf("%d) ID: %s | Name: %s |Service Details: %s | Date of service: %s\n",
-        i+1,
-        services[i].serviceID,
-        services[i].customerName,
-        services[i].serviceDetails,
-        services[i].serviceDate);
+    printf("\n=== All Services ===\n");
+    for (int i = 0; i < count; i++) {
+        printf("ID: %s | Name: %s | Details: %s | Date: %s\n",
+               services[i].serviceID,
+               services[i].customerName,
+               services[i].serviceDetails,
+               services[i].serviceDate);
     }
-    printf("------------------------\n");
-
+    printf("====================\n");
 }
+
 
 //menu page
 void Menu() {
