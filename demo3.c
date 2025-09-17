@@ -59,11 +59,11 @@ void LoadData(Service services[], int *count) {
     *count = 0;
 
     // fscanf reads 4 fields separated by commas
-    while (fscanf(file, "%[^,],%[^,],%[^,],%[^\n]\n",
+    while (fscanf(file, "%[^,],%[^,],%[^,],%[^\n]\n", //changed %s to %[^\n] 
                   services[*count].serviceID,
                   services[*count].customerName,
                   services[*count].serviceDetails,
-                  services[*count].serviceDate) != EOF) {// == 4
+                  services[*count].serviceDate) != EOF) { //anf == 4 to != EOF
 
         (*count)++;
     }
@@ -130,7 +130,7 @@ void SearchService(Service services[], int count) {
     int found = 0;
     for(int i = 0; i < count; i++) {
         if(strcmp(services[i].serviceID, input) == 0 || 
-           strcasecmp(services[i].customerName, input) == 0) {
+           strcasecmp(services[i].customerName, input) == 0) { //changed from strstr to strcasesmp
             printf("Service Found:\n");
             printf("ID: %s\nCustomer: %s\nDetails: %s\nDate: %s\n\n",
                    services[i].serviceID,
