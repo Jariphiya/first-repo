@@ -152,10 +152,21 @@ void SearchService(Service services[], int count) {
 //delete record
 void DeleteService(Service services[],int *count){
     char id[50];
-    printf("Enter Name or ID: ");
+    char confirm;
+    int found;
+
+    while(1){
+
+    printf("Enter ID (or 0 to cancel deletion): ");
     scanf("%s",id);
 
-    int found = -1;
+    if(strcmp(id, "0") == 0){
+        printf("Deletion Cancelled. Returning to Main Menu.\n");
+        return; // if cancel return to main page
+    }
+
+
+    found = -1;
     for(int i=0; i<*count; i++){
         if(strcmp(services[i].serviceID,id)==0){
             found = i;
@@ -164,17 +175,35 @@ void DeleteService(Service services[],int *count){
     }
     if(found == -1){
         printf("Service ID not found.\n");
-        return;
+        continue; // if not found then ask again
     }
+    
+    //show target record
+    printf("\nService found:\n");
+    printf("ID: %s | Name: %s | Details: %s | Date: %s\n",
+               services[found].serviceID,
+               services[found].customerName,
+               services[found].serviceDetails,
+               services[found].serviceDate);
 
+    //ask for confirmation
+    printf("\nAre you sure you want to delete this record? (y/n):");
+    scanf(" %c",&confirm);
+
+    if ( confirm == 'y' || confirm == 'Y'){
     for(int i=found ;i < *count;i++){
         services[i] = services[i+1];
-    }
-
+        }
+    
     (*count)--;
-
     SaveData(services,*count);
     printf("Service deleted successfully!.\n");
+    return;
+    }
+    else{
+        printf("Deletion Cancelled.\n");
+    }
+}
 }
 
 
@@ -203,8 +232,8 @@ void Menu() {
     printf("1. Display All Services\n");
     printf("2. Add Service\n");
     printf("3. Search Service\n");
-    printf("4. Update Service\n");
-    printf("5. Delete Service\n");
+    printf("4. Delete Service\n");
+    printf("5. Update Service\n");
     printf("0. Exit\n");
     printf("=======================================\n");
 }
