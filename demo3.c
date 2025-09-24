@@ -16,6 +16,7 @@ void LoadData(Service services[],int *count);
 void SaveData(Service services[],int count);
 void SearchService(Service services[],int count);
 void AddService(Service services[],int *count);
+void DeleteService(Service services[],int *count);
 void DisplayAll(Service services[],int count);
 void Menu(void);
 
@@ -37,6 +38,7 @@ int main(){
         case 1: DisplayAll(services, count); break;
         case 2: AddService(services, &count); break; 
         case 3: SearchService(services, count); break;
+        case 4: DeleteService(services, &count); break;
         case 0: printf("Exiting program...\n"); break;
         default: printf("Choice invalid. Try again.\n");
                     }
@@ -59,11 +61,11 @@ void LoadData(Service services[], int *count) {
     *count = 0;
 
     // fscanf reads 4 fields separated by commas
-    while (fscanf(file, "%[^,],%[^,],%[^,],%[^\n]\n", //changed %s to %[^\n] 
+    while (fscanf(file, "%[^,],%[^,],%[^,],%[^\n]\n",
                   services[*count].serviceID,
                   services[*count].customerName,
                   services[*count].serviceDetails,
-                  services[*count].serviceDate) != EOF) { //anf == 4 to != EOF
+                  services[*count].serviceDate) != EOF) {// == 4
 
         (*count)++;
     }
@@ -117,7 +119,7 @@ void AddService(Service services[],int *count){
     printf("Service added and saved successfully!\n");
 }
 
-//search for services by ID or Name P.S. WHY DOESN'T THIS WORK AHHHH
+//search for services by ID or Name P.S. It works now :D
 void SearchService(Service services[], int count) {
     char input[100];
     printf("Enter Service ID or Customer Name to search: ");
@@ -127,10 +129,11 @@ void SearchService(Service services[], int count) {
 
     //input[strcspn(input, "\n")] = 0;
 
+
     int found = 0;
     for(int i = 0; i < count; i++) {
         if(strcmp(services[i].serviceID, input) == 0 || 
-           strcasecmp(services[i].customerName, input) == 0) { //changed from strstr to strcasesmp
+           strcasecmp(services[i].customerName, input) == 0) {
             printf("Service Found:\n");
             printf("ID: %s\nCustomer: %s\nDetails: %s\nDate: %s\n\n",
                    services[i].serviceID,
@@ -145,6 +148,35 @@ void SearchService(Service services[], int count) {
         printf("No matching service found.\n");
     }
 }
+
+//delete record
+void DeleteService(Service services[],int *count){
+    char id[50];
+    printf("Enter Name or ID: ");
+    scanf("%s",id);
+
+    int found = -1;
+    for(int i=0; i<*count; i++){
+        if(strcmp(services[i].serviceID,id)==0){
+            found = i;
+            break;
+        }
+    }
+    if(found == -1){
+        printf("Service ID not found.\n");
+        return;
+    }
+
+    for(int i=found ;i < *count;i++){
+        services[i] = services[i+1];
+    }
+
+    (*count)--;
+
+    SaveData(services,*count);
+    printf("Service deleted successfully!.\n");
+}
+
 
 //display all records cuz I'm paranoid
 void DisplayAll(Service services[], int count) {
