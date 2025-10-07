@@ -14,10 +14,11 @@ typedef struct {
 
 void LoadData(Service services[],int *count);
 void SaveData(Service services[],int count);
-void SearchService(Service services[],int count);
+void SearchService(Service services[],int count); 
 void AddService(Service services[],int *count);
 void DeleteService(Service services[],int *count);
 void DisplayAll(Service services[],int count);
+void UpdateService(Service services[],int count);
 void Menu(void);
 
 int main(){
@@ -39,6 +40,7 @@ int main(){
         case 2: AddService(services, &count); break; 
         case 3: SearchService(services, count); break;
         case 4: DeleteService(services, &count); break;
+        case 5: UpdateService(services, count); break;
         case 0: printf("Exiting program...\n"); break;
         default: printf("Choice invalid. Try again.\n");
                     }
@@ -94,30 +96,64 @@ void SaveData(Service services[], int count){
 
 }
 
-//add new service
-void AddService(Service services[],int *count){
-    //check array bounds.
-    if(*count >= MAX){
-        printf("Cannot add more services (max %d reached).\n",MAX);
+//generate new id automatically
+void GenerateNextID(Service services[], int count, char *newID) {
+    int maxID = 0;
+    for (int i = 0; i < count; i++) {
+        int num = atoi(services[i].serviceID + 1); // skip 'S'
+        if (num > maxID) {
+            maxID = num;
+        }
+    }
+    sprintf(newID, "S%03d", maxID + 1); // format as S001, S002, etc.
+}
+
+void AddService(Service services[], int *count) {
+    char confirm;
+    printf("=== Add New Service ===\n");
+
+    //First confirmation — before entering data
+    printf("Do you want to add a new service? (y to continue / 0 to cancel): ");
+    scanf(" %c", &confirm);
+    if (confirm == '0') {
+        printf("Add cancelled.\n");
         return;
     }
 
-    printf("Enter Service ID: ");
-    scanf(" %9s", services[*count].serviceID);
+    //Generate new ID automatically
+    GenerateNextID(services, *count, services[*count].serviceID);
+    printf("Assigned ID: %s\n", services[*count].serviceID);
 
-    printf("Enter Name: ");
-    scanf(" %49[^\n]",services[*count].customerName);
+    printf("Enter customer name: ");
+    scanf(" %[^\n]", services[*count].customerName);
 
-    printf("Enter Service Detail: ");
-    scanf(" %99[^\n]",services[*count].serviceDetails);
+    printf("Enter service details: ");
+    scanf(" %[^\n]", services[*count].serviceDetails);
 
-    printf("Enter Service Date(YYYY-MM-DD): ");
-    scanf(" %14s",services[*count].serviceDate);
+    printf("Enter service date (YYYY-MM-DD): ");
+    scanf(" %[^\n]", services[*count].serviceDate);
+
+    //Display entered data for review
+    printf("\nYou entered:\n");
+    printf("Service ID: %s\n", services[*count].serviceID);
+    printf("Customer Name: %s\n", services[*count].customerName);
+    printf("Service Details: %s\n", services[*count].serviceDetails);
+    printf("Service Date: %s\n", services[*count].serviceDate);
+
+
+    printf("\nConfirm save this new record? (y to save / 0 to cancel): ");
+    scanf(" %c", &confirm);
+    if (confirm == '0') {
+        printf("Add cancelled — record not saved.\n");
+        return;
+    }
+
 
     (*count)++;
-    SaveData(services,*count);
-    printf("Service added and saved successfully!\n");
+    SaveData(services, *count);
+    printf("New service record added successfully!\n");
 }
+
 
 //search for services by ID or Name P.S. It works now :D
 void SearchService(Service services[], int count) {
@@ -152,19 +188,18 @@ void SearchService(Service services[], int count) {
 //delete record
 void DeleteService(Service services[],int *count){
     char id[50];
-    char confirm;
+    char confirm[4];
     int found;
 
     while(1){
 
     printf("Enter ID (or 0 to cancel deletion): ");
-    scanf("%s",id);
+    scanf(" %[^\n]",id);
 
     if(strcmp(id, "0") == 0){
         printf("Deletion Cancelled. Returning to Main Menu.\n");
         return; // if cancel return to main page
     }
-
 
     found = -1;
     for(int i=0; i<*count; i++){
@@ -187,10 +222,10 @@ void DeleteService(Service services[],int *count){
                services[found].serviceDate);
 
     //ask for confirmation
-    printf("\nAre you sure you want to delete this record? (y/n):");
-    scanf(" %c",&confirm);
+    printf("\nAre you sure you want to delete this record? (y/n): ");
+    scanf(" %c", &confirm);
 
-    if ( confirm == 'y' || confirm == 'Y'){
+    if ( confirm[0] == 'y' || confirm[0] == 'Y'){
     for(int i=found ;i < *count;i++){
         services[i] = services[i+1];
         }
@@ -207,6 +242,94 @@ void DeleteService(Service services[],int *count){
 }
 
 
+
+//update service
+void UpdateService(Service services[], int count) {
+    char id[10];
+    printf("Enter Service ID to update: ");
+    scanf("%s", id);
+
+    int found = -1;  
+    for (int i = 0; i < count; i++) {
+        if (strcasecmp(services[i].serviceID, id) == 0) {
+            found = i;
+            break;
+        }
+    }
+
+    if (found == -1) {
+        printf("No service found with ID %s\n", id);
+        return;
+    }
+
+    // Show current record
+    printf("\nService Found:\n");
+    printf("ID: %s\nCustomer: %s\nDetails: %s\nDate: %s\n",
+           services[found].serviceID,
+           services[found].customerName,
+           services[found].serviceDetails,
+           services[found].serviceDate);
+
+    int choice;
+    int changed = 0; // track updates 
+
+    do {
+        printf("\nWhat would you like to update?\n");
+        printf("1. Customer Name\n");
+        printf("2. Service Details (will also update Date)\n");
+        printf("3. Service Date only\n");
+        printf("0. Finish updating\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+        getchar(); // clear buffer
+
+        switch (choice) {
+            case 1:
+                printf("Enter new Customer Name: ");
+                scanf(" %[^\n]s", services[found].customerName);
+                changed = 1;
+                break;
+            case 2:
+                printf("Enter new Service Details: ");
+                scanf(" %[^\n]s", services[found].serviceDetails);
+
+                printf("Enter updated Service Date (YYYY-MM-DD): ");
+                scanf("%s", services[found].serviceDate);
+                changed = 1;
+                break;
+            case 3:
+                printf("Enter new Service Date (YYYY-MM-DD): ");
+                scanf("%s", services[found].serviceDate);
+                changed = 1;
+                break;
+            case 0:
+                printf("Finished updating.\n");
+                break;
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+
+    } while (choice != 0);
+
+    // Ask for confirmation only if something changed
+    if (changed) {
+        char confirm;
+        printf("\nAre you sure you want to save these changes? (y/n): ");
+        scanf(" %c", &confirm);
+
+        if (confirm == 'y' || confirm == 'Y') {
+            SaveData(services, count);
+            printf("Service record updated successfully!\n");
+        } else {
+            printf("Changes were discarded.\n");
+        }
+    } else {
+        printf("No changes were made.\n");
+    }
+}
+
+
+
 //display all records cuz I'm paranoid
 void DisplayAll(Service services[], int count) {
     if (count == 0) {
@@ -214,7 +337,7 @@ void DisplayAll(Service services[], int count) {
         return;
     }
     printf("\n==================== All Services =====================\n");
-    for (int i = 0; i < count; i++) {
+    for (int i = 1; i < count; i++) {
         printf("ID: %s | Name: %s | Details: %s | Date: %s\n",
                services[i].serviceID,
                services[i].customerName,

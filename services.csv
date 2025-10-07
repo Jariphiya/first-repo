@@ -1,3 +1,4 @@
+ID,Customer Name,Service Details,Service Date
 S001,Johny Times,IT Support,2025-01-23
 S002,Alice Wong,Maintenance,2025-02-10
 S003,Bob Lee,Networking,2025-03-05
@@ -13,4 +14,5 @@ S012,Ava Taylor,Server Upgrade,2025-07-19
 S013,Ethan Moore,Mobile Support,2025-08-07
 S014,Sophia Hall,Web Development,2025-08-23
 S015,Mason Allen,Backup Services,2025-09-01
-S016,Harry Potter,Sight Repairo,2025-11-25
+S016,Selena Gomez,Sight Repairo,2025-11-25
+S017,Inu Hinako,Wedding Preparation,2025-10-07
