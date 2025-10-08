@@ -1,81 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-#define MAX 100 // max service
-
-typedef struct
-{
-    char serviceID[10];
-    char customerName[50];
-    char serviceDetails[100];
-    char serviceDate[15];
-} Service;
-
-void ReplaceComma(char *str);
-void RestoreComma(char *str);
-void GenerateNextID(Service services[], int count, char *newID);
-void LoadData(Service services[], int *count);
-void SaveData(Service services[], int count);
-void SearchService(Service services[], int count);
-void AddService(Service services[], int *count);
-void DeleteService(Service services[], int *count);
-void DisplayAll(Service services[], int count);
-void UpdateService(Service services[], int count);
-void Menu(void);
-
-int main()
-{
-    Service services[MAX];
-    int count = 0;
-
-    LoadData(services, &count);
-
-    int choice;
-    do
-    {
-        Menu();
-        char buff[10];
-        printf("Enter choice: ");
-        if (!fgets(buff, sizeof(buff), stdin))
-        {
-            choice = -1;
-        }
-        else
-        {
-            choice = atoi(buff);
-        }
-
-        switch (choice)
-        {
-        case 1:
-            DisplayAll(services, count);
-            break;
-        case 2:
-            AddService(services, &count);
-            break;
-        case 3:
-            SearchService(services, count);
-            break;
-        case 4:
-            DeleteService(services, &count);
-            break;
-        case 5:
-            UpdateService(services, count);
-            break;
-        case 9:
-            printf("Exiting program...\n");
-            return 0;
-        default:
-            printf("Choice invalid. Try again.\n");
-            break;
-        }
-        printf("Enter to continue...");
-        while (getchar() != '\n');
-    } while (1);
-
-    return 0;
-}
+#include"project.h"
 
 // Replace commas with semicolons to protect CSV structure
 void ReplaceComma(char *str)
@@ -123,7 +49,7 @@ void LoadData(Service services[], int *count)
     }
 
     fclose(file);
-    printf("%d records loaded.\n", *count);
+    printf("%d records loaded.\n", *count-1);
 }
 
 // save data to csv
@@ -477,3 +403,4 @@ void Menu()
     printf("9. Exit\n");
     printf("=======================================\n");
 }
+

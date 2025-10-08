@@ -1,7 +1,8 @@
 #include"stdio.h"
 #include"string.h"
 #include"stdlib.h"
-#include"project.c"
+#include<assert.h>
+#include"project.h"
 
 #define Test(name) void name()
 #define ASSERT(cond, msg)\
