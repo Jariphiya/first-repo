@@ -264,37 +264,6 @@ The system automatically handles commas in data by converting them to semicolons
 2. Watch comprehensive test execution
 3. All tests should show ✓ (pass) indicators
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes
-4. Run all tests: Choose menu option 8
-5. Commit changes: `git commit -am 'Add feature'`
-6. Push to branch: `git push origin feature-name`
-7. Submit a Pull Request
-
-### Code Standards
-- Use consistent indentation (4 spaces)
-- Add comments for complex logic
-- Follow existing naming conventions
-- Ensure all tests pass before submitting
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 📞 Support
-
-If you encounter issues:
-1. Check the [Troubleshooting](#troubleshooting) section
-2. Review [TESTING_README.md](TESTING_README.md) for testing details
-3. Create an issue on GitHub with:
-   - Your operating system
-   - GCC version (`gcc --version`)
-   - Error messages
-   - Steps to reproduce
-
 ---
 
 **Version**: 2.0  
