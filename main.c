@@ -25,7 +25,7 @@ int main()
             choice = atoi(buff);
         }
 
-        switch (choice)
+switch (choice)
         {
         case 1:
             DisplayAll(services, count);
@@ -42,6 +42,15 @@ int main()
         case 5:
             UpdateService(services, count);
             break;
+        case 6:
+            RunUnitTests();
+            break;
+        case 7:
+            TestE2E();
+            break;
+        case 8:
+            RunAllTests();
+            break;
         case 9:
             printf("Exiting program...\n");
             return 0;
@@ -51,6 +60,7 @@ int main()
         }
         printf("Enter to continue...");
         while (getchar() != '\n');
+        system("cls||clear");
     } while (1);
 
     return 0;

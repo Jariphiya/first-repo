@@ -8,7 +8,6 @@ static char current_filename[100] = "services.csv"; // file currently in use
 void SetCSVFile(const char *filename) {
     strncpy(current_filename, filename, sizeof(current_filename));
     current_filename[sizeof(current_filename) - 1] = '\0';
-    printf("[DEBUG] SetCSVFile: current file = %s\n", current_filename);
 }
 
 // Replace commas with semicolons to protect CSV structure
@@ -443,6 +442,9 @@ void Menu()
     printf("3. Search Service\n");
     printf("4. Delete Service\n");
     printf("5. Update Service\n");
+    printf("6. Run Unit Tests\n");
+    printf("7. Run E2E Tests\n");
+    printf("8. Run All Tests\n");
     printf("9. Exit\n");
     printf("=======================================\n");
 }

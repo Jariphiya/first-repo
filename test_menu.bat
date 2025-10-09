@@ -1,0 +1,9 @@
+@echo off
+echo Testing Unit Tests...
+echo 6 | program.exe
+echo.
+echo Testing E2E Tests...
+echo 7 | program.exe
+echo.
+echo Testing All Tests...
+echo 8 | program.exe

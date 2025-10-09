@@ -33,4 +33,14 @@ void UpdateService(Service services[], int count);
 void DisplayAll(Service services[], int count);
 void Menu(void);
 
+// Unit test functions (from unit_test.c)
+void TestAddService(void);
+void TestUpdateService(void);
+void TestDeleteService(void);
+void RunUnitTests(void);
+
+// E2E test functions (from e2e.c)
+void TestE2E(void);
+void RunAllTests(void);
+
 #endif
