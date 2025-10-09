@@ -6,6 +6,7 @@
 #include <string.h>
 
 #define MAX 100
+#define DEFAULT_FILENAME "services.csv"
 
 typedef struct {
     char serviceID[10];
@@ -22,6 +23,7 @@ void GenerateNextID(Service services[], int count, char *newID);
 // Core data functions
 void LoadData(Service services[], int *count);
 void SaveData(Service services[], int count);
+void SetCSVFile(const char *filename); 
 
 // Service operations
 void AddService(Service services[], int *count);

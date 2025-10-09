@@ -3,6 +3,13 @@
 #include <stdlib.h>
 #include"project.h"
 
+static char current_filename[100] = "services.csv"; // file currently in use
+
+void SetCSVFile(const char *filename) {
+    strncpy(current_filename, filename, sizeof(current_filename));
+    current_filename[sizeof(current_filename) - 1] = '\0';
+}
+
 // Replace commas with semicolons to protect CSV structure
 void ReplaceComma(char *str)
 {
@@ -27,52 +34,87 @@ void RestoreComma(char *str)
     }
 }
 
-void LoadData(Service services[], int *count)
-{
-    FILE *file = fopen("services.csv", "r");
-    if (file == NULL)
-    {
-        printf("No existing file found.\n");
-        return;
-    }
-    *count = 0;
-
-    // fscanf reads 4 fields separated by commas
-    while (fscanf(file, "%[^,],%[^,],%[^,],%[^\n]\n",
-                  services[*count].serviceID,
-                  services[*count].customerName,
-                  services[*count].serviceDetails,
-                  services[*count].serviceDate) != EOF)
-    {
-
-        (*count)++;
-    }
-
-    fclose(file);
-    printf("%d records loaded.\n", *count-1);
-}
-
-// save data to csv
-void SaveData(Service services[], int count)
-{
-    FILE *file = fopen("services.csv", "w");
-    if (file == NULL)
-    {
+void SaveData(Service services[], int count) {
+    FILE *f = fopen(current_filename, "w");
+    if (!f){
         printf("Error: could not save file!\n");
         return;
     }
-
     for (int i = 0; i < count; i++)
-    {
-        fprintf(file, "%s,%s,%s,%s\n",
+        fprintf(f, "%s,%s,%s,%s\n",
                 services[i].serviceID,
                 services[i].customerName,
                 services[i].serviceDetails,
                 services[i].serviceDate);
-    }
-    fclose(file);
+    fclose(f);
     printf("Data Saved.\n");
 }
+
+void LoadData(Service services[], int *count) {
+    FILE *f = fopen(current_filename, "r");
+    if (!f) {
+        printf("No existing file found.\n");
+        return;
+    }
+    *count = 0;
+    while (fscanf(f, "%[^,],%[^,],%[^,],%[^\n]\n",
+                  services[*count].serviceID,
+                  services[*count].customerName,
+                  services[*count].serviceDetails,
+                  services[*count].serviceDate) == 4)
+    {
+        (*count)++;
+    }
+    fclose(f);
+    printf("%d records loaded.\n", *count-1);
+}
+
+// void LoadData(Service services[], int *count)
+// {
+//     FILE *file = fopen("services.csv", "r");
+//     if (file == NULL)
+//     {
+//         printf("No existing file found.\n");
+//         return;
+//     }
+//     *count = 0;
+
+//     // fscanf reads 4 fields separated by commas
+//     while (fscanf(file, "%[^,],%[^,],%[^,],%[^\n]\n",
+//                   services[*count].serviceID,
+//                   services[*count].customerName,
+//                   services[*count].serviceDetails,
+//                   services[*count].serviceDate) != EOF)
+//     {
+
+//         (*count)++;
+//     }
+
+//     fclose(file);
+//     printf("%d records loaded.\n", *count-1);
+// }
+
+// // save data to csv
+// void SaveData(Service services[], int count)
+// {
+//     FILE *file = fopen("services.csv", "w");
+//     if (file == NULL)
+//     {
+//         printf("Error: could not save file!\n");
+//         return;
+//     }
+
+//     for (int i = 0; i < count; i++)
+//     {
+//         fprintf(file, "%s,%s,%s,%s\n",
+//                 services[i].serviceID,
+//                 services[i].customerName,
+//                 services[i].serviceDetails,
+//                 services[i].serviceDate);
+//     }
+//     fclose(file);
+//     printf("Data Saved.\n");
+// }
 
 // generate new id automatically
 void GenerateNextID(Service services[], int count, char *newID)

@@ -44,6 +44,7 @@ Test(test_generate_next_id){
 //     ASSERT(strcmp(loaded[1].serviceDetails,"Maintenance") == 0, "LoadData() record 2");
 // }
 
+
 Test(test_search_service) {
     Service services[2] = {
         {"S001", "Alice", "Fix lights", "2025-01-01"},
