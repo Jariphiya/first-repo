@@ -8,6 +8,7 @@ static char current_filename[100] = "services.csv"; // file currently in use
 void SetCSVFile(const char *filename) {
     strncpy(current_filename, filename, sizeof(current_filename));
     current_filename[sizeof(current_filename) - 1] = '\0';
+    printf("[DEBUG] SetCSVFile: current file = %s\n", current_filename);
 }
 
 // Replace commas with semicolons to protect CSV structure
